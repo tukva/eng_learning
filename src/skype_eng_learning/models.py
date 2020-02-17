@@ -50,7 +50,7 @@ class Teacher(models.Model):
         ('SATURDAY', 'Saturday'), )
 
     TYPES_OF_LESSON = Choices(
-        ('ZNO', 'Zno'),
+        ('ZNO', 'ZNO'),
         ('SPEAKING', 'Speaking'),
         ('BUSINESS', 'Business'),
         ('TRAVELING', 'Traveling'), )
