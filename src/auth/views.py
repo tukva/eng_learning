@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import render, redirect
 from django.contrib.sites.shortcuts import get_current_site
@@ -10,6 +11,10 @@ from django.template.loader import render_to_string
 
 from .forms import SignUpForm, LoginForm
 from .tokens import account_activation_token
+
+
+def account_view(request):
+    return HttpResponse('My account')
 
 
 def activation_sent_view(request):
@@ -30,7 +35,7 @@ def activate(request, uidb64, token):
         user.profile.signup_confirmation = True
         user.save()
         login(request, user)
-        return redirect('')
+        return redirect('account')
     else:
         return render(request, 'activation_invalid.html')
 
@@ -73,7 +78,7 @@ def login_view(request):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('')
+                return redirect('account')
             else:
                 return render(request, 'login_invalid.html')
     else:
@@ -83,4 +88,4 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return redirect('')
+    return redirect('signup')
