@@ -1,4 +1,4 @@
-from django.contrib.auth import login
+from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import render, redirect
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_text
@@ -8,7 +8,7 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from django.template.loader import render_to_string
 
-from .forms import SignUpForm
+from .forms import SignUpForm, LoginForm
 from .tokens import account_activation_token
 
 
@@ -30,13 +30,13 @@ def activate(request, uidb64, token):
         user.profile.signup_confirmation = True
         user.save()
         login(request, user)
-        return redirect('home')
+        return redirect('')
     else:
         return render(request, 'activation_invalid.html')
 
 
 def signup_view(request):
-    if request.method  == 'POST':
+    if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
@@ -62,3 +62,25 @@ def signup_view(request):
     else:
         form = SignUpForm()
     return render(request, 'signup.html', {'form': form})
+
+
+def login_view(request):
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('')
+            else:
+                return render(request, 'login_invalid.html')
+    else:
+        form = LoginForm(request.POST)
+    return render(request, 'login.html', {'form': form})
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('')
